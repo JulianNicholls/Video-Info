@@ -1,33 +1,43 @@
 const fs = require('fs');
 const path = require('path');
-const { ffprobe } = require('fluent-ffmpeg');
 const { ljust, rjust } = require('justify-text');
 
-const { parseData, humanSize, humanTime } = require('./videoData');
+const { spawnFFProbe, parseData, humanSize, humanTime } = require('./videoData');
 
-const dirname = process.argv[2];
+const readImages = dirname => {
+  let images = [];
 
-fs.readdir(dirname, { withFileTypes: true }, (err, files) => {
-  if (err) {
-    console.error(err);
-    process.exit(-1);
-  }
+  const dir = fs.opendirSync(dirname);
+  let file;
 
-  files.forEach(file => {
+  while ((file = dir.readSync())) {
     if (!file.isDirectory()) {
       const fqfile = path.join(dirname, file.name);
 
-      ffprobe(fqfile, (err, videodata) => {
-        if (err) {
-          return console.log(`${file.name} No data`);
-        }
+      const reply = spawnFFProbe(fqfile);
 
-        const { duration, size, width, height } = parseData(videodata);
+      const { duration, size, width, height } = parseData(reply.data);
 
-        const res = ljust(`${rjust(width.toString(), 4)}x${height}`, 9);
-        const time = rjust(humanTime(duration), 7);
-        console.log(`${ljust(file.name, 40)} ${res}  ${time}  ${humanSize(size)}`);
-      });
+      images.push({ name: file.name, duration, size, width, height });
     }
+  }
+
+  return images;
+};
+
+const main = dirname => {
+  const images = readImages(dirname);
+
+  images.forEach(({ name, width, height, duration, size }) => {
+    const res = ljust(`${rjust(width.toString(), 4)}x${height}`, 9);
+    const time = rjust(humanTime(duration), 7);
+
+    console.log(
+      `${ljust(name, 40)} ${res}  ${time}  ${rjust(humanSize(size), 8)}`
+    );
   });
-});
+};
+
+const dirname = process.argv[2];
+
+main(dirname);

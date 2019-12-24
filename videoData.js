@@ -1,3 +1,23 @@
+const { spawnSync } = require('child_process');
+
+const spawnFFProbe = filename => {
+  const options = [
+    '-v',
+    '-8',
+    '-of',
+    'json=c=1',
+    '-hide_banner',
+    '-show_streams',
+    '-show_format',
+  ];
+
+  const reply = spawnSync('ffprobe', [...options, filename], {
+    encoding: 'utf-8',
+  });
+
+  return { data: JSON.parse(reply.stdout), ...reply };
+};
+
 const humanSize = size => {
   if (size > 1400000) return `${(size / 1048576).toFixed(1)}MB`;
 
@@ -27,9 +47,9 @@ const parseData = videodata => {
 
     return {
       format,
-      duration,
-      size,
-      bit_rate,
+      duration: Number(duration),
+      size: Number(size),
+      bit_rate: Number(bit_rate),
       codec_name: '',
       width: 0,
       height: 0,
@@ -40,9 +60,9 @@ const parseData = videodata => {
 
   return {
     format,
-    duration,
-    size,
-    bit_rate,
+    duration: Number(duration),
+    size: Number(size),
+    bit_rate: Number(bit_rate),
     codec_name,
     width,
     height,
@@ -64,6 +84,7 @@ const humanTime = length => {
 };
 
 module.exports = {
+  spawnFFProbe,
   parseData,
   humanSize,
   humanTime,
