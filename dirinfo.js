@@ -3,6 +3,17 @@ const path = require('path');
 const { ljust, rjust } = require('justify-text');
 
 const { spawnFFProbe, parseData, humanSize, humanTime } = require('./videoData');
+const { setOptions } = require('./options');
+
+const options = {
+  dirname: '',
+  minSize: 0,
+  maxSize: 0,
+  minLength: 0,
+  maxLength: 0,
+  minHeight: 0,
+  maxHeight: 0,
+};
 
 const readImages = dirname => {
   let images = [];
@@ -13,9 +24,7 @@ const readImages = dirname => {
   while ((file = dir.readSync())) {
     if (!file.isDirectory()) {
       const fqfile = path.join(dirname, file.name);
-
       const reply = spawnFFProbe(fqfile);
-
       const { duration, size, width, height } = parseData(reply.data);
 
       images.push({ name: file.name, duration, size, width, height });
@@ -38,6 +47,10 @@ const main = dirname => {
   });
 };
 
-const dirname = process.argv[2];
+setOptions(process.argv, options);
 
-main(dirname);
+console.log({ options });
+
+// const dirname = process.argv[2];
+
+main(options.dirname);
