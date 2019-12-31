@@ -25,6 +25,18 @@ const humanSize = size => {
 };
 
 const parseData = videodata => {
+  if (!videodata.format) {
+    // Not a video file?
+    return {
+      format: 'NOT VIDEO',
+      duration: 0,
+      size: 0,
+      bit_rate: 0,
+      codec_name: '',
+      width: 0,
+      height: 0,
+    };
+  }
   const {
     format: { format_long_name: format, duration, size, bit_rate },
     streams,

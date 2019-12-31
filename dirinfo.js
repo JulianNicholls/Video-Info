@@ -18,17 +18,20 @@ const options = {
 const readImages = dirname => {
   let images = [];
 
-  const dir = fs.opendirSync(dirname);
-  let file;
+  try {
+    const dir = fs.opendirSync(dirname);
+    let file;
 
-  while ((file = dir.readSync())) {
-    if (!file.isDirectory()) {
-      const fqfile = path.join(dirname, file.name);
-      const reply = spawnFFProbe(fqfile);
-      const { duration, size, width, height } = parseData(reply.data);
+    while ((file = dir.readSync())) {
+      if (!file.isDirectory()) {
+        const fqfile = path.join(dirname, file.name);
+        const reply = spawnFFProbe(fqfile);
+        const { duration, size, width, height } = parseData(reply.data);
 
       images.push({ name: file.name, duration, size, width, height });
     }
+  } catch (err) {
+    console.error(`Cannot open ${dirname}`);
   }
 
   return images;
@@ -49,7 +52,7 @@ const main = dirname => {
 
 setOptions(process.argv, options);
 
-console.log({ options });
+// console.log({ options });
 
 // const dirname = process.argv[2];
 
