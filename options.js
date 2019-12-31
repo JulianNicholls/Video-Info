@@ -26,7 +26,7 @@ const setOptions = (argv, options) => {
     const arg = argv[i];
 
     if (arg[0] === '-') {
-      const [, name, value] = arg.match(/-([a-z]+)[:=]([0-9mk:]+)/i);
+      const [, name, value] = arg.match(/-([a-z]+)[:=]?([0-9mk:]+)?/i);
 
       switch (name) {
         case 'minsize':
@@ -51,6 +51,22 @@ const setOptions = (argv, options) => {
 
         case 'maxheight':
           options.maxHeight = Number(value);
+          break;
+
+        case 'ss':
+          options.sort = 'size';
+          break;
+
+        case 'sd':
+          options.sort = 'duration';
+          break;
+
+        case 'totals':
+          options.totals = true;
+          break;
+
+        case 'brief':
+          options.brief = true;
           break;
       }
     } else options.dirname = arg;
