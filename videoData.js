@@ -1,17 +1,17 @@
 const { spawnSync } = require('child_process');
 
-const spawnFFProbe = filename => {
-  const options = [
-    '-v',
-    '-8',
-    '-of',
-    'json=c=1',
-    '-hide_banner',
-    '-show_streams',
-    '-show_format',
-  ];
+const ffpOptions = [
+  '-v',
+  '-8',
+  '-of',
+  'json=c=1',
+  '-hide_banner',
+  '-show_streams',
+  '-show_format',
+];
 
-  const reply = spawnSync('ffprobe', [...options, filename], {
+const spawnFFProbe = filename => {
+  const reply = spawnSync('ffprobe', [...ffpOptions, filename], {
     encoding: 'utf-8',
   });
 
@@ -19,14 +19,15 @@ const spawnFFProbe = filename => {
 };
 
 const humanSize = size => {
-  if (size > 1400000) return `${(size / 1048576).toFixed(1)}MB`;
+  if (size > 1100000000) return `${(size / 1073741824).toFixed(1)}GB`; // 1GB (1024^3)
+  if (size > 1100000) return `${(size / 1048576).toFixed(1)}MB`;
 
-  return `${(size / 1024).toFixed(2)}KB`;
+  return `${(size / 1024).toFixed(1)}KB`;
 };
 
 const parseData = videodata => {
   if (!videodata.format) {
-    // Not a video file?
+    // Probably not a video file
     return {
       format: 'NOT VIDEO',
       duration: 0,
@@ -37,6 +38,7 @@ const parseData = videodata => {
       height: 0,
     };
   }
+
   const {
     format: { format_long_name: format, duration, size, bit_rate },
     streams,
@@ -55,7 +57,7 @@ const parseData = videodata => {
   }
 
   if (!video) {
-    console.error('No video stream in file');
+    console.warn('No video stream in file');
 
     return {
       format,

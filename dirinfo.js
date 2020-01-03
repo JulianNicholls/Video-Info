@@ -89,18 +89,19 @@ const main = dirname => {
   const fImages = filtered(images, options);
 
   fImages.forEach(({ name, width, height, duration, size }) => {
-    const res = ljust(`${rjust(width.toString(), 4)}x${height}`, 9);
-    const time = rjust(humanTime(duration), 7);
-
     if (options.brief) console.log(name);
-    else
+    else {
+      const res = ljust(`${rjust(width.toString(), 4)}x${height}`, 9);
+      const time = rjust(humanTime(duration), 7);
+
       console.log(
         `${ljust(name, 40)}  ${res}  ${time}  ${rjust(humanSize(size), 9)}`
       );
+    }
   });
 
-  if (options.totals && fImages.length > 1) {
-    const totals = fImages.reduce(
+  if (!options.brief && options.totals && fImages.length > 1) {
+    const { duration, size } = fImages.reduce(
       (acc, image) => {
         acc.duration += image.duration;
         acc.size += image.size;
@@ -110,12 +111,7 @@ const main = dirname => {
       { duration: 0, size: 0 }
     );
 
-    console.log(
-      `${rjust(humanTime(totals.duration), 60)}  ${rjust(
-        humanSize(totals.size),
-        9
-      )}`
-    );
+    console.log(`${rjust(humanTime(duration), 60)}  ${rjust(humanSize(size), 9)}`);
   }
 };
 
