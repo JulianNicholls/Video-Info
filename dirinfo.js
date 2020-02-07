@@ -7,12 +7,12 @@ const { setOptions } = require('./options');
 
 const options = {
   dirname: '',
-  minSize: 0,
-  maxSize: 0,
-  minLength: 0,
-  maxLength: 0,
-  minHeight: 0,
-  maxHeight: 0,
+  minsize: 0,
+  maxsize: 0,
+  minlength: 0,
+  maxlength: 0,
+  minheight: 0,
+  maxheight: 0,
   sort: '',
   totals: false,
   brief: false,
@@ -46,12 +46,12 @@ const readImages = dirname => {
 
 const filtered = (images, options) => {
   const {
-    minSize,
-    maxSize,
-    minLength,
-    maxLength,
-    minHeight,
-    maxHeight,
+    minsize,
+    maxsize,
+    minlength,
+    maxlength,
+    minheight,
+    maxheight,
     sort,
   } = options;
 
@@ -64,15 +64,15 @@ const filtered = (images, options) => {
     // These are easy, it doesn't matter whether they've been explicitly set
     // because 0 is a valid value
     if (
-      image.size < minSize ||
-      image.duration < minLength ||
-      image.height < minHeight
+      image.size < minsize ||
+      image.duration < minlength ||
+      image.height < minheight
     )
       ok = false;
 
-    if (maxSize !== 0 && image.size > maxSize) ok = false;
-    if (maxLength !== 0 && image.duration > maxLength) ok = false;
-    if (maxHeight !== 0 && image.height > maxHeight) ok = false;
+    if (maxsize !== 0 && image.size > maxsize) ok = false;
+    if (maxlength !== 0 && image.duration > maxlength) ok = false;
+    if (maxheight !== 0 && image.height > maxheight) ok = false;
 
     return ok;
   });

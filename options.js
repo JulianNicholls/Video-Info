@@ -30,27 +30,18 @@ const setOptions = (argv, options) => {
 
       switch (name) {
         case 'minsize':
-          options.minSize = parseSize(value);
-          break;
-
         case 'maxsize':
-          options.maxSize = parseSize(value);
+          options[name] = parseSize(value);
           break;
 
         case 'minlength':
-          options.minlength = parseDuration(value);
-          break;
-
         case 'maxlength':
-          options.maxlength = parseDuration(value);
+          options[name] = parseDuration(value);
           break;
 
         case 'minheight':
-          options.minHeight = Number(value);
-          break;
-
         case 'maxheight':
-          options.maxHeight = Number(value);
+          options[name] = Number(value);
           break;
 
         case 'ss':
@@ -62,14 +53,13 @@ const setOptions = (argv, options) => {
           break;
 
         case 'totals':
-          options.totals = true;
-          break;
-
         case 'brief':
-          options.brief = true;
+          options[name] = true;
           break;
       }
-    } else options.dirname = arg;
+    } else {
+      options.dirname = arg;
+    }
   }
 };
 
