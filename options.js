@@ -10,11 +10,13 @@ const parseSize = value => {
 
 const parseDuration = value => {
   const [, first, second, third] = value.match(/(\d{1,5}):?(\d{0,2}):?(\d{0,2})/);
+  const firstNum = Number(first);
+  const secondNum = Number(second);
 
-  let retval = Number(first); // Just a value in seconds
+  let retval = firstNum; // Just a value in seconds
 
-  if (third) retval = Number(first) * 3600 + Number(second) * 60 + Number(third);
-  else if (second) retval = Number(first) * 60 + Number(second);
+  if (third) retval = firstNum * 3600 + secondNum * 60 + Number(third);
+  else if (second) retval = firstNum * 60 + secondNum;
 
   return retval;
 };

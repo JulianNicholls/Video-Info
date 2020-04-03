@@ -88,14 +88,19 @@ const main = dirname => {
   const images = readImages(dirname);
   const fImages = filtered(images, options);
 
+  const nameWidth = fImages.reduce((w, { name }) => Math.max(w, name.length), 40);
+
   fImages.forEach(({ name, width, height, duration, size }) => {
     if (options.brief) console.log(name);
     else {
-      const res = ljust(`${rjust(width.toString(), 4)}x${height}`, 9);
+      const res = ljust(`${rjust(width, 4)}x${height}`, 9);
       const time = rjust(humanTime(duration), 7);
 
       console.log(
-        `${ljust(name, 40)}  ${res}  ${time}  ${rjust(humanSize(size), 9)}`
+        `${ljust(name, nameWidth + 2)}  ${res}  ${time}  ${rjust(
+          humanSize(size),
+          9
+        )}`
       );
     }
   });
@@ -111,7 +116,9 @@ const main = dirname => {
       { duration: 0, size: 0 }
     );
 
-    console.log(`${rjust(humanTime(duration), 60)}  ${rjust(humanSize(size), 9)}`);
+    console.log(
+      `${rjust(humanTime(duration), nameWidth + 22)}  ${rjust(humanSize(size), 9)}`
+    );
   }
 };
 
