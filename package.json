@@ -11,6 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "fluent-ffmpeg": "^2.1.2",
-    "justify-text": "^1.1.0"
+    "justify-text": "^1.1.1"
   }
 }
