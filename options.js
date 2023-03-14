@@ -1,4 +1,4 @@
-const parseSize = value => {
+const parseSize = (value) => {
   const [, numbers, suffix] = value.match(/([0-9]+)([mk]?)/i);
   let retval = Number(numbers);
 
@@ -8,7 +8,7 @@ const parseSize = value => {
   return retval;
 };
 
-const parseDuration = value => {
+const parseDuration = (value) => {
   const [, first, second, third] = value.match(/(\d{1,5}):?(\d{0,2}):?(\d{0,2})/);
   const firstNum = Number(first);
   const secondNum = Number(second);
@@ -63,6 +63,8 @@ const setOptions = (argv, options) => {
       options.dirname = arg;
     }
   }
+
+  return !!options.dirname;
 };
 
-module.exports = { setOptions };
+export { setOptions };

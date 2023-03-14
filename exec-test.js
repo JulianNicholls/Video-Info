@@ -1,17 +1,9 @@
 // execSync could be used, but it turns out that spawnSync is probably better anyway :-)
-const { spawnSync } = require('child_process');
+import { spawnSync } from 'child_process';
 
-const options = [
-  '-v',
-  '-8',
-  '-of',
-  'json=c=1',
-  '-hide_banner',
-  '-show_streams',
-  '-show_format',
-];
+const options = ['-v', '-8', '-of', 'json=c=1', '-hide_banner', '-show_streams', '-show_format'];
 
-const spawnFFProbe = filename => {
+const spawnFFProbe = (filename) => {
   const reply = spawnSync('ffprobe', [...options, filename], {
     encoding: 'utf-8',
   });

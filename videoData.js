@@ -1,16 +1,8 @@
-const { spawnSync } = require('child_process');
+import { spawnSync } from 'child_process';
 
-const ffpOptions = [
-  '-v',
-  '-8',
-  '-of',
-  'json=c=1',
-  '-hide_banner',
-  '-show_streams',
-  '-show_format',
-];
+const ffpOptions = ['-v', '-8', '-of', 'json=c=1', '-hide_banner', '-show_streams', '-show_format'];
 
-const spawnFFProbe = filename => {
+const spawnFFProbe = (filename) => {
   const reply = spawnSync('ffprobe', [...ffpOptions, filename], {
     encoding: 'utf-8',
   });
@@ -18,14 +10,7 @@ const spawnFFProbe = filename => {
   return { data: JSON.parse(reply.stdout), ...reply };
 };
 
-const humanSize = size => {
-  if (size > 1100000000) return `${(size / 1073741824).toFixed(1)}GB`; // 1GB (1024^3)
-  if (size > 1100000) return `${(size / 1048576).toFixed(1)}MB`;
-
-  return `${(size / 1024).toFixed(1)}KB`;
-};
-
-const parseData = videodata => {
+const parseData = (videodata) => {
   if (!videodata.format) {
     // Probably not a video file
     return {
@@ -83,7 +68,14 @@ const parseData = videodata => {
   };
 };
 
-const humanTime = length => {
+const humanSize = (size) => {
+  if (size > 1100000000) return `${(size / 1073741824).toFixed(1)}GB`; // 1GB (1024^3)
+  if (size > 1100000) return `${(size / 1048576).toFixed(1)}MB`;
+
+  return `${(size / 1024).toFixed(1)}KB`;
+};
+
+const humanTime = (length) => {
   length = Math.round(length);
 
   const hours = length > 3600 ? `${Math.floor(length / 3600)}:` : '';
@@ -92,14 +84,7 @@ const humanTime = length => {
 
   if (hours === '' && mins === 0) return `${secs}s`;
 
-  return `${hours}${mins < 10 ? '0' + mins : mins}:${
-    secs < 10 ? '0' + secs : secs
-  }`;
+  return `${hours}${mins < 10 ? '0' + mins : mins}:${secs < 10 ? '0' + secs : secs}`;
 };
 
-module.exports = {
-  spawnFFProbe,
-  parseData,
-  humanSize,
-  humanTime,
-};
+export { spawnFFProbe, parseData, humanSize, humanTime };

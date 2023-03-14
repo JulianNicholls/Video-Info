@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const { ljust, rjust } = require('justify-text');
+import { opendirSync } from 'fs';
+import { join } from 'path';
+import { ljust, rjust } from 'justify-text';
 
-const { spawnFFProbe, parseData, humanSize, humanTime } = require('./videoData');
-const { setOptions } = require('./options');
+import { spawnFFProbe, parseData, humanSize, humanTime } from './videoData.js';
+import { setOptions } from './options.js';
 
 const options = {
   dirname: '',
@@ -18,16 +18,16 @@ const options = {
   brief: false,
 };
 
-const readImages = dirname => {
+const readImages = (dirname) => {
   let images = [];
 
   try {
-    const dir = fs.opendirSync(dirname);
+    const dir = opendirSync(dirname);
     let file;
 
     while ((file = dir.readSync())) {
       if (!file.isDirectory()) {
-        const fqfile = path.join(dirname, file.name);
+        const fqfile = join(dirname, file.name);
         const reply = spawnFFProbe(fqfile);
         const { duration, size, width, height } = parseData(reply.data);
 
@@ -45,17 +45,9 @@ const readImages = dirname => {
 };
 
 const filtered = (images, options) => {
-  const {
-    minsize,
-    maxsize,
-    minlength,
-    maxlength,
-    minheight,
-    maxheight,
-    sort,
-  } = options;
+  const { minsize, maxsize, minlength, maxlength, minheight, maxheight, sort } = options;
 
-  const fImages = images.filter(image => {
+  const fImages = images.filter((image) => {
     // Probably not a video file
     if (image.height === 0 || image.duration === 0) return false;
 
@@ -63,12 +55,7 @@ const filtered = (images, options) => {
 
     // These are easy, it doesn't matter whether they've been explicitly set
     // because 0 is a valid value
-    if (
-      image.size < minsize ||
-      image.duration < minlength ||
-      image.height < minheight
-    )
-      ok = false;
+    if (image.size < minsize || image.duration < minlength || image.height < minheight) ok = false;
 
     if (maxsize !== 0 && image.size > maxsize) ok = false;
     if (maxlength !== 0 && image.duration > maxlength) ok = false;
@@ -84,7 +71,7 @@ const filtered = (images, options) => {
   return fImages;
 };
 
-const main = dirname => {
+const main = (dirname) => {
   const images = readImages(dirname);
   const fImages = filtered(images, options);
 
@@ -96,12 +83,7 @@ const main = dirname => {
       const res = ljust(`${rjust(width, 4)}x${height}`, 9);
       const time = rjust(humanTime(duration), 7);
 
-      console.log(
-        `${ljust(name, nameWidth + 2)}  ${res}  ${time}  ${rjust(
-          humanSize(size),
-          9
-        )}`
-      );
+      console.log(`${ljust(name, nameWidth + 2)}  ${res}  ${time}  ${rjust(humanSize(size), 9)}`);
     }
   });
 
@@ -116,13 +98,21 @@ const main = dirname => {
       { duration: 0, size: 0 }
     );
 
-    console.log(
-      `${rjust(humanTime(duration), nameWidth + 22)}  ${rjust(humanSize(size), 9)}`
-    );
+    console.log(`${rjust(humanTime(duration), nameWidth + 22)}  ${rjust(humanSize(size), 9)}`);
   }
 };
 
-setOptions(process.argv, options);
+if (!setOptions(process.argv, options)) {
+  console.log(`Usage: dirinfo <options...> [filename]
+
+  -minsize:n, -maxsize:n\tMinimum or maximum size to report on.
+  -minlength, -maxlength\tMinimum or maximum duration to report on.
+  -minheight, -maxheight\tMinimum or maximum height to report on.
+  -ss, -sd\t\t\tSort by size or duration.
+  -totals\t\t\tReport the total duration and file size.
+  -brief\t\t\tJust show the complete path of each video file.
+  `);
+}
 
 // console.log({ options });
 
